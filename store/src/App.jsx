@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import emailjs from '@emailjs/browser';
 import { 
   ShoppingCart, Search, User, ShieldCheck, Truck, RotateCcw, 
   CreditCard, CheckCircle, Trash2, Plus, Minus, X, LogOut, Mail, Lock, Globe, Smartphone, Package, Check
@@ -276,6 +277,10 @@ export default function App() {
     }
 
     const generatedId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
+    
+    // Format cart items for EmailJS template
+    const itemsDescription = cart.map(it => `${it.qty}x ${it.name} (${it.selectedColor} ${it.selectedPta !== null ? (it.selectedPta ? '- PTA' : '- Non PTA') : ''}) - Rs. ${(it.actualPrice * it.qty).toLocaleString()}`).join('\n');
+
     const orderData = {
       id: generatedId,
       name: shippingInfo.name,
@@ -287,6 +292,31 @@ export default function App() {
       paymentMethod: shippingInfo.paymentMethod,
       date: new Date().toLocaleDateString()
     };
+
+    // EmailJS Parameters matching your template variables
+    const emailParams = {
+      order_id: generatedId,
+      customer_name: shippingInfo.name,
+      customer_phone: shippingInfo.phone,
+      customer_email: shippingInfo.email,
+      shipping_address: orderData.address,
+      payment_method: shippingInfo.paymentMethod === "Card" ? "Credit Card (Secure)" : "Cash on Delivery",
+      total_amount: finalTotal.toLocaleString(),
+      order_items: itemsDescription
+    };
+
+    // Send real email via EmailJS
+    emailjs.send(
+      'service_8b1f4ar',
+      'Template_vjbfedg',
+      emailParams,
+      'YOUR_PUBLIC_KEY' // <--- Yahan apni EmailJS ki Public Key paste kar dein
+    )
+      .then((response) => {
+         console.log('SUCCESS!', response.status, response.text);
+      }, (err) => {
+         console.log('FAILED...', err);
+      });
 
     setLastOrder(orderData);
     setIsCheckoutOpen(false);
@@ -908,7 +938,7 @@ export default function App() {
       {/* Footer */}
       <footer className="bg-slate-950 text-white py-10 px-4 mt-20 border-t border-slate-800 text-xs">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-slate-400 space-y-3 sm:space-y-0 font-medium">
-          <p>© 2026 iMegaStore Pakistan & Global. All rights reserved.</p>
+          <p>©️ 2026 iMegaStore Pakistan & Global. All rights reserved.</p>
           <div className="flex space-x-6">
             <span>iPhone Flagships</span>
             <span>Secure Checkout</span>
