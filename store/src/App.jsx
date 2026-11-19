@@ -277,9 +277,11 @@ export default function App() {
     }
 
     const generatedId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
-    
+
     // Format cart items for EmailJS template
-    const itemsDescription = cart.map(it => `${it.qty}x ${it.name} (${it.selectedColor} ${it.selectedPta !== null ? (it.selectedPta ? '- PTA' : '- Non PTA') : ''}) - Rs. ${(it.actualPrice * it.qty).toLocaleString()}`).join('\n');
+    const itemsDescription = cart
+      .map(it => `${it.qty}x ${it.name} (${it.selectedColor} ${it.selectedPta !== null ? (it.selectedPta ? '- PTA' : '- Non PTA') : ''}) - Rs. ${(it.actualPrice * it.qty).toLocaleString()}`)
+      .join('\n');
 
     const orderData = {
       id: generatedId,
@@ -295,6 +297,7 @@ export default function App() {
 
     // EmailJS Parameters matching your template variables
     const emailParams = {
+      email: shippingInfo.email,
       order_id: generatedId,
       customer_name: shippingInfo.name,
       customer_phone: shippingInfo.phone,
@@ -308,14 +311,14 @@ export default function App() {
     // Send real email via EmailJS
     emailjs.send(
       'service_8b1f4ar',
-      'Template_vjbfedg',
+      'template_vjbfedg',
       emailParams,
-      'YOUR_PUBLIC_KEY' // <--- Yahan apni EmailJS ki Public Key paste kar dein
+      'nVkR4atm2eccz9Hu4' // <--- Yahan apni EmailJS ki Public Key paste kar dein
     )
       .then((response) => {
-         console.log('SUCCESS!', response.status, response.text);
+        console.log('SUCCESS!', response.status, response.text);
       }, (err) => {
-         console.log('FAILED...', err);
+        console.log('FAILED...', err);
       });
 
     setLastOrder(orderData);
