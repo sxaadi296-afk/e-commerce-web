@@ -296,17 +296,18 @@ export default function App() {
     };
 
     // EmailJS Parameters matching your template variables
-    const emailParams = {
-      email: shippingInfo.email,
-      order_id: generatedId,
-      customer_name: shippingInfo.name,
-      customer_phone: shippingInfo.phone,
-      customer_email: shippingInfo.email,
-      shipping_address: orderData.address,
-      payment_method: shippingInfo.paymentMethod === "Card" ? "Credit Card (Secure)" : "Cash on Delivery",
-      total_amount: finalTotal.toLocaleString(),
-      order_items: itemsDescription
-    };
+   const emailParams = {
+  email: shippingInfo.email,
+  store_name: "iMegaStore",
+  order_id: orderData.id,
+  customer_name: shippingInfo.name,
+  customer_phone: shippingInfo.phone,
+  customer_email: shippingInfo.email,
+  shipping_address: orderData.address,
+  payment_method: shippingInfo.paymentMethod === "Card" ? "Credit Card (Secure)" : "Cash on Delivery",
+  total_amount: finalTotal.toLocaleString(),
+  order_items: itemsDescription
+};
 
     // Send real email via EmailJS
     emailjs.send(
